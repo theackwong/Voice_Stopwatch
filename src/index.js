@@ -14,17 +14,21 @@ class Stopwatch extends React.Component {
     this.state = { 
       secondsElapsed: 0, 
       laps: [],
-      lastClearedIncrementer: null
+      lastClearedIncrementer: null,
+      started:false
     };
     this.incrementer = null;
   }  
     
   handleStartClick() {
-    this.incrementer = setInterval( () =>
-      this.setState({
-        secondsElapsed: this.state.secondsElapsed + 1
-      })
-    , 1000);
+  	if (this.state.started === false || (this.state.started === true && this.state.secondsElapsed > 0)) {
+   		this.incrementer = setInterval( () =>
+      		this.setState({
+        		secondsElapsed: this.state.secondsElapsed + 1
+      	})
+    	, 1000);
+    	this.setState({started: true});
+    }
   }
   
   handleStopClick() {
@@ -38,11 +42,12 @@ class Stopwatch extends React.Component {
     clearInterval(this.incrementer);
     this.setState({
       secondsElapsed: 0,
-      laps: []
+      laps: [],
+      started: false
     });
   }
   
-  handleLabClick() {
+  handleLapClick() {
     this.setState({
       laps: this.state.laps.concat([this.state.secondsElapsed])
     })
@@ -61,10 +66,9 @@ class Stopwatch extends React.Component {
         
         {(this.state.secondsElapsed !== 0 &&
           this.incrementer !== this.state.lastClearedIncrementer
-          ? <Button onClick={this.handleLabClick.bind(this)}>lab</Button>
+          ? <Button onClick={this.handleLapClick.bind(this)}>lap</Button>
           : null
         )}
-
 
         {(this.state.secondsElapsed !== 0 &&
           this.incrementer === this.state.lastClearedIncrementer
@@ -74,7 +78,7 @@ class Stopwatch extends React.Component {
 
         <ul className="stopwatch-laps">
           { this.state.laps.map((lap, i) =>
-              <li className="stopwatch-lap"><strong>{i + 1}</strong>/ {formattedSeconds(lap)}</li>)
+              <li className="stopwatch-lap"><strong>{i + 1}</strong> {formattedSeconds(lap)}</li>)
           }
         </ul>
       </div>
@@ -82,14 +86,6 @@ class Stopwatch extends React.Component {
   }
 }
 
-/** verbose component before 0.14
-class Button extends React.Component {
-  render() {
-    return <button type="button" {...this.props}
-                   className={"btn " + this.props.className } />;
-  }
-}
-*/
 
 const Button = (props) =>
   <button type="button" {...props} className={"btn " + props.className } />;
