@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { ReactMic } from 'react-mic'
 
 const formattedSeconds = (sec) =>
   Math.floor(sec / 60) +
@@ -15,7 +16,8 @@ class Stopwatch extends React.Component {
       secondsElapsed: 0, 
       laps: [],
       lastClearedIncrementer: null,
-      started:false
+      started: false,
+      record: false
     };
     this.incrementer = null;
   }  
@@ -27,7 +29,10 @@ class Stopwatch extends React.Component {
         		secondsElapsed: this.state.secondsElapsed + 1
       	})
     	, 1000);
-    	this.setState({started: true});
+    	this.setState({
+        started: true,
+        record: true
+      });
     }
   }
   
@@ -43,7 +48,8 @@ class Stopwatch extends React.Component {
     this.setState({
       secondsElapsed: 0,
       laps: [],
-      started: false
+      started: false,
+      record: false
     });
   }
   
@@ -56,6 +62,12 @@ class Stopwatch extends React.Component {
   render() {
     return (
       <div className="stopwatch">
+          <div>
+            <ReactMic
+            record={this.state.record}
+            className="sound-wave"
+            onStop={this.onStop} />
+          </div>
         <h1 className="stopwatch-timer">{formattedSeconds(this.state.secondsElapsed)}</h1>
    
         {(this.state.secondsElapsed === 0 ||
